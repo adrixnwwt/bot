@@ -3,90 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nachricht an den Owner</title>
+    <title>Send Message</title>
     <style>
         body {
             background-color: #0f0f0f;
-            color: white;
-            font-family: Arial, sans-serif;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
-        .container {
+
+        .card {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             text-align: center;
+            width: 100%;
+            max-width: 350px;
         }
+
+        h2 {
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
         input {
-            padding: 10px;
-            width: 250px;
-            border: none;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            background: #252525;
+            color: white;
+            border-radius: 4px;
+            box-sizing: border-box; /* Wichtig für das Padding */
+        }
+
+        input:focus {
+            border-color: #5865F2; /* Discord-Blau */
             outline: none;
         }
+
         button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #ffffff;
-            border: none;
-            margin-top: 10px;
-            display: block;
             width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
         }
+
         button:hover {
-            background-color: #cccccc;
+            background-color: #dddddd;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="card">
         <h2>Send message to owner</h2>
-        <input type="text" id="userMessage" placeholder="Schreib hier etwas...">
-        <button id="sendBtn" onclick="sendToDiscord()">Send</button>
+        <input type="text" id="msg" placeholder="Deine Nachricht..." autocomplete="off">
+        <button id="btn" onclick="send()">Send</button>
     </div>
 
     <script>
-        async function sendToDiscord() {
-            const webhookURL = "https://discord.com/api/webhooks/1475125201367859311/bjHdv8VtwY43Yz1aeN7lADgGSDKzYL26aJAlHRFctVw84XAGkg7G10K8_9tgUYMbD2z8"; // <--- HIER DEINE URL EINTRAGEN
-            const messageInput = document.getElementById('userMessage');
-            const button = document.getElementById('sendBtn');
-            
-            if (messageInput.value.trim() === "") {
-                alert("Bitte schreib erst etwas!");
-                return;
-            }
+        async function send() {
+            const url = "DEINE_DISCORD_WEBHOOK_URL_HIER"; // <--- Deine URL hier rein
+            const input = document.getElementById('msg');
+            const btn = document.getElementById('btn');
 
-            // Button kurz sperren, damit man nicht spammt
-            button.disabled = true;
-            button.innerText = "Wird gesendet...";
+            if (!input.value.trim()) return;
 
-            const data = {
-                content: `**Neue Nachricht von der Website:**\n${messageInput.value}`
-            };
+            btn.disabled = true;
+            btn.innerText = "Sending...";
 
             try {
-                const response = await fetch(webhookURL, {
+                const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ content: input.value })
                 });
 
-                if (response.ok) {
-                    alert("Nachricht wurde an Discord gesendet!");
-                    messageInput.value = ""; // Feld leeren
+                if (res.ok) {
+                    input.value = "";
+                    alert("Gesendet!");
                 } else {
-                    alert("Fehler beim Senden. Webhook-URL korrekt?");
+                    alert("Fehler!");
                 }
-            } catch (error) {
-                console.error(error);
-                alert("Netzwerkfehler!");
+            } catch (e) {
+                alert("Verbindungsfehler!");
             } finally {
-                button.disabled = false;
-                button.innerText = "Send";
+                btn.disabled = false;
+                btn.innerText = "Send";
             }
         }
     </script>
 
 </body>
+</html>
+
+</body>
+
 </html>
