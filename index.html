@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nachricht an den Owner</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            width: 250px;
+            border: none;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #ffffff;
+            border: none;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Send message to owner</h2>
+        <input type="text" id="userMessage" placeholder="Schreib hier etwas...">
+        <button id="sendBtn" onclick="sendToDiscord()">Send</button>
+    </div>
+
+    <script>
+        async function sendToDiscord() {
+            const webhookURL = "https://discord.com/api/webhooks/1475125201367859311/bjHdv8VtwY43Yz1aeN7lADgGSDKzYL26aJAlHRFctVw84XAGkg7G10K8_9tgUYMbD2z8"; // <--- HIER DEINE URL EINTRAGEN
+            const messageInput = document.getElementById('userMessage');
+            const button = document.getElementById('sendBtn');
+            
+            if (messageInput.value.trim() === "") {
+                alert("Bitte schreib erst etwas!");
+                return;
+            }
+
+            // Button kurz sperren, damit man nicht spammt
+            button.disabled = true;
+            button.innerText = "Wird gesendet...";
+
+            const data = {
+                content: `**Neue Nachricht von der Website:**\n${messageInput.value}`
+            };
+
+            try {
+                const response = await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("Nachricht wurde an Discord gesendet!");
+                    messageInput.value = ""; // Feld leeren
+                } else {
+                    alert("Fehler beim Senden. Webhook-URL korrekt?");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Netzwerkfehler!");
+            } finally {
+                button.disabled = false;
+                button.innerText = "Send";
+            }
+        }
+    </script>
+
+</body>
+</html>
